@@ -15,9 +15,14 @@ from bs4 import BeautifulSoup
 # browser.submit()
 
 def findStringValuefromTable(soup,str):
-	rawHtml = soup.find_all(string=re.compile(str))[0].find_parent('td').find_next('td')
-	# print rawHtml
-	# print type(rawHtml)
+	try:
+		rawHtml = soup.find_all(string=re.compile(str))[0].find_parent('td').find_next('td')
+		return extractString(rawHtml)
+	except:
+		print "Cannot parse"
+	
+
+def extractString(rawHtml):
 	result = ''
 	try:
 		if type(rawHtml) is not None:
@@ -63,7 +68,7 @@ print findStringValuefromTable(trainDetailTable,'Journey Date')
 # print findStringValuefromTable(trainDetailTable,'Last Location')
 
 
-print trainDetailTable.prettify()
+# print trainDetailTable.prettify()
 
 
 
