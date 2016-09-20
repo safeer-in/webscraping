@@ -66,8 +66,7 @@ def scrapTrainData(trainNo,station,startDate,startDay):
 		# print findStringValuefromTable(trainDetailTable,'Delay Arrival')
 		# print findStringValuefromTable(trainDetailTable,'Last Location')
 
-
-	# print trainDetailTable.prettify()
+		# print trainDetailTable.prettify()
 	except Exception as e:
 		print "Error in parsing train data Error: " + e.message
 
