@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 # import mechanize
+import datetime
 import urllib, urllib2
 import re
 from bs4 import BeautifulSoup
@@ -34,13 +35,23 @@ def extractString(rawHtml):
 	return result
 
 
+today = datetime.date.today()
+todayFormated = today.strftime('%d-%b-%Y');
+dayofweek = today.strftime('%a')
+
+trainNo = '16630'
+queryStation = 'QLN#false'
+queryDate = todayFormated
+queryDay = dayofweek
+
+
 req = urllib2.Request("http://enquiry.indianrail.gov.in/mntes/MntesServlet?action=TrainRunning&subAction=ShowRunC",
-                      data=urllib.urlencode({'trainNo': '16303',
-                                             'jStation': 'QLN#false',
+                      data=urllib.urlencode({'trainNo': trainNo,
+                                             'jStation': queryStation,
                                              'arrDepFlag': 'A',
-                                             'jDate':'20-Sep-2016',
-                                             'jDateMap':'20-Sep-2016',
-                                             'jDateDay':'Tue'
+                                             'jDate':queryDate,
+                                             'jDateMap':queryDate,
+                                             'jDateDay':queryDay
                                              }),
 
                       headers={'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.116 Safari/537.36',
