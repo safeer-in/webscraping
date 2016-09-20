@@ -1,19 +1,10 @@
 #!/usr/bin/env python
 
-# import mechanize
 import datetime
 import urllib, urllib2
 import re
 from bs4 import BeautifulSoup
 
-
-# browser = mechanize.Browser()
-# browser.open('http://www.mohammedsafeer.in')
-# browser.select_form(name='contact-form')
-# browser['name'] = "mechanize"
-# browser['email'] = "safeer.ar@inapp.com"
-# browser['phone'] = "871-44-250-96"
-# browser.submit()
 
 def findStringValuefromTable(soup,str):
 	try:
@@ -45,43 +36,43 @@ queryDate = todayFormated
 queryDay = dayofweek
 
 
-req = urllib2.Request("http://enquiry.indianrail.gov.in/mntes/MntesServlet?action=TrainRunning&subAction=ShowRunC",
-                      data=urllib.urlencode({'trainNo': trainNo,
-                                             'jStation': queryStation,
-                                             'arrDepFlag': 'A',
-                                             'jDate':queryDate,
-                                             'jDateMap':queryDate,
-                                             'jDateDay':queryDay
-                                             }),
+def scrapTrainData(trainNo,station,startDate,startDay):
 
-                      headers={'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.116 Safari/537.36',
-                               'Cookie': 'JSESSIONID=eUP2Upcl2p-aSIzpPueMKRlNQpEpqyN07G90diYS.ntes_host2:host2_server1; SERVERID=cch7fw87sfs4; _gat=1; _ga=GA1.3.263681154.1461936530'})
-response = urllib2.urlopen(req)
+	req = urllib2.Request(
+		"http://enquiry.indianrail.gov.in/mntes/MntesServlet?action=TrainRunning&subAction=ShowRunC",
+	    data=urllib.urlencode({'trainNo': trainNo,
+	         'jStation': station,
+	         'arrDepFlag': 'A',
+	         'jDate':startDate,
+	         'jDateMap':startDate,
+	         'jDateDay':startDay
+	         }),
+	    headers={
+	    	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64)',
+	        'Cookie': ''
+	        })
 
-soup = BeautifulSoup(response.read(),"lxml")
+	response = urllib2.urlopen(req)
 
-trainDetailTable = soup.find_all("table",attrs={'id':'ResTab'})[0];
+	soup = BeautifulSoup(response.read(),"lxml")
 
-# trainName = findStringValuefromTable(trainDetailTable,'Train Name')
-
-# journeyStation = findStringValuefromTable(trainDetailTable,'Journey Station')
-
-# print trainName
-
-# print journeyStation
-
-print findStringValuefromTable(trainDetailTable,'Train Name')
-print findStringValuefromTable(trainDetailTable,'Journey Station')
-print findStringValuefromTable(trainDetailTable,'Journey Date')
-# print findStringValuefromTable(trainDetailTable,'Scheduled Arrival')
-# print findStringValuefromTable(trainDetailTable,'Actual Arrival')
-# print findStringValuefromTable(trainDetailTable,'Delay Arrival')
-# print findStringValuefromTable(trainDetailTable,'Last Location')
+	try:
+		trainDetailTable = soup.find_all("table",attrs={'id':'ResTab'})[0]
+		print findStringValuefromTable(trainDetailTable,'Train Name')
+		print findStringValuefromTable(trainDetailTable,'Journey Station')
+		print findStringValuefromTable(trainDetailTable,'Journey Date')
+		# print findStringValuefromTable(trainDetailTable,'Scheduled Arrival')
+		# print findStringValuefromTable(trainDetailTable,'Actual Arrival')
+		# print findStringValuefromTable(trainDetailTable,'Delay Arrival')
+		# print findStringValuefromTable(trainDetailTable,'Last Location')
 
 
-# print trainDetailTable.prettify()
+	# print trainDetailTable.prettify()
+	except Exception as e:
+		print "Error in parsing train data Error: " + e.message
 
 
 
+scrapTrainData(trainNo,queryStation,queryDate,queryDay)
 
 
