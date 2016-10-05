@@ -28,16 +28,6 @@ def extractString(rawHtml):
 	return result
 
 
-today = datetime.date.today()
-todayFormated = today.strftime('%d-%b-%Y');
-dayofweek = today.strftime('%a')
-
-trainNoList = ['16630','16341','16303','56308']
-queryStation = 'QLN#false'
-queryDate = todayFormated
-queryDay = dayofweek
-
-
 def scrapTrainData(trainNo,station,startDate,startDay):
 
 	req = urllib2.Request(
@@ -98,6 +88,17 @@ def scrapTrainData(trainNo,station,startDate,startDay):
 	except Exception as e:
 		print "Error in parsing train data Error: " + e.message
 
+
+
+
+today = datetime.date.today()
+todayFormated = today.strftime('%d-%b-%Y');
+dayofweek = today.strftime('%a')
+
+trainNoList = ['16630','16341','16303','56308']
+queryStation = 'QLN#false'
+queryDate = todayFormated
+queryDay = dayofweek
 
 for trainNo in trainNoList:
 	scrapTrainData(trainNo,queryStation,queryDate,queryDay)
