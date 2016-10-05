@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 
+import os
 import datetime
 import urllib, urllib2
 import re
 from bs4 import BeautifulSoup
+import json
 
 
 def findStringValuefromTable(soup,str):
@@ -30,7 +32,7 @@ today = datetime.date.today()
 todayFormated = today.strftime('%d-%b-%Y');
 dayofweek = today.strftime('%a')
 
-trainNo = '16630'
+trainNoList = ['16630','16341','16303','56308']
 queryStation = 'QLN#false'
 queryDate = todayFormated
 queryDay = dayofweek
@@ -58,20 +60,46 @@ def scrapTrainData(trainNo,station,startDate,startDay):
 
 	try:
 		trainDetailTable = soup.find_all("table",attrs={'id':'ResTab'})[0]
-		print findStringValuefromTable(trainDetailTable,'Train Name')
-		print findStringValuefromTable(trainDetailTable,'Journey Station')
-		print findStringValuefromTable(trainDetailTable,'Journey Date')
+		trainName = findStringValuefromTable(trainDetailTable,'Train Name')
+		journeyStation = findStringValuefromTable(trainDetailTable,'Journey Station')
+		journeyDate = findStringValuefromTable(trainDetailTable,'Journey Date')
 		# print findStringValuefromTable(trainDetailTable,'Scheduled Arrival')
 		# print findStringValuefromTable(trainDetailTable,'Actual Arrival')
 		# print findStringValuefromTable(trainDetailTable,'Delay Arrival')
 		# print findStringValuefromTable(trainDetailTable,'Last Location')
 
 		# print trainDetailTable.prettify()
+		
+		data = {
+				'trainName':trainName,
+				'journeyStation':journeyStation,
+				'journeyDate':journeyDate,
+				'time': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+			}
+
+		try:
+
+			directory = 'data'
+			if not os.path.exists(directory):
+				try:
+					os.makedirs('data')
+				except OSError as e:
+					print 'Error in creating dir'+ e.message
+			else:
+				pass
+
+			with open(directory+'/'+trainNo+'.json','w') as outfile:
+				json.dump(data,outfile)
+
+		except Exception as e:
+			print "Error in save train files " + e.message
+
+		print data
 	except Exception as e:
 		print "Error in parsing train data Error: " + e.message
 
 
-
-scrapTrainData(trainNo,queryStation,queryDate,queryDay)
+for trainNo in trainNoList:
+	scrapTrainData(trainNo,queryStation,queryDate,queryDay)
 
 
