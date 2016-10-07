@@ -6,6 +6,7 @@ import urllib, urllib2
 import re
 from bs4 import BeautifulSoup
 import json
+from database import MongoConnection
 
 
 def findStringValuefromTable(soup,str):
@@ -26,6 +27,17 @@ def extractString(rawHtml):
 		print rawHtml
 
 	return result
+
+def saveData(json):
+	database = MongoConnection('traindata');
+	collection = database.createCollection("traindetails")
+	collection.insert(json)
+
+def getData():
+	database = MongoConnection('traindata');
+	collection = database.createCollection("traindetails")
+	return collection.find(json)
+
 
 
 def scrapTrainData(trainNo,station,startDate,startDay):
@@ -93,7 +105,8 @@ def scrapTrainData(trainNo,station,startDate,startDay):
 	except Exception as e:
 		print "Error in save train files " + e.message
 
-	print data
+	saveData(data)
+	print getData()
 
 
 
