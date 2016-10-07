@@ -36,7 +36,7 @@ def saveData(json):
 def getData():
 	database = MongoConnection('traindata');
 	collection = database.createCollection("traindetails")
-	return collection.find(json)
+	return collection.find()
 
 
 
