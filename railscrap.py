@@ -21,8 +21,8 @@ def extractString(rawHtml):
 	try:
 		if type(rawHtml) is not None:
 			result = rawHtml.string.extract()
-	except:
-		print "Exception Handled"
+	except Exception as e:
+		print "Exception occured "+e.message
 		print rawHtml
 
 	return result
@@ -67,26 +67,33 @@ def scrapTrainData(trainNo,station,startDate,startDay):
 				'time': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 			}
 
-		try:
-
-			directory = 'data'
-			if not os.path.exists(directory):
-				try:
-					os.makedirs('data')
-				except OSError as e:
-					print 'Error in creating dir'+ e.message
-			else:
-				pass
-
-			with open(directory+'/'+trainNo+'.json','w') as outfile:
-				json.dump(data,outfile)
-
-		except Exception as e:
-			print "Error in save train files " + e.message
-
-		print data
 	except Exception as e:
-		print "Error in parsing train data Error: " + e.message
+		data = {
+			'error':{
+				'status': 01,
+				'status_code':'ERR',
+				'message':e.message
+			}
+		}
+
+	try:
+
+		directory = 'data'
+		if not os.path.exists(directory):
+			try:
+				os.makedirs('data')
+			except OSError as e:
+				print 'Error in creating dir'+ e.message
+		else:
+			pass
+
+		with open(directory+'/'+trainNo+'.json','w') as outfile:
+			json.dump(data,outfile)
+
+	except Exception as e:
+		print "Error in save train files " + e.message
+
+	print data
 
 
 
@@ -95,7 +102,7 @@ today = datetime.date.today()
 todayFormated = today.strftime('%d-%b-%Y');
 dayofweek = today.strftime('%a')
 
-trainNoList = ['16630','16341','16303','56308']
+trainNoList = ['16630','16341','16303','56308','sasdf']
 queryStation = 'QLN#false'
 queryDate = todayFormated
 queryDay = dayofweek
