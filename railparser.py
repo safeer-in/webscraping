@@ -17,16 +17,29 @@ class RailParser(object):
 		try:
 			rawHtml = soup.find_all(string=re.compile(str))[0].find_parent('td').find_next('td')
 			return self.extractString(rawHtml)
-		except:
+		except Exception as e:
+			return self.errorResponse('02','ERR',e.message)
 			print "Cannot parse"
 		
+	def errorResponse(self,status,status_code,message):
+		return {
+			'error' : {
+				'status' : status,
+				'status_code' : status_code,
+				'message' : message
+			}
+		}
 
 	def extractString(self,rawHtml):
 		result = ''
 		try:
 			if type(rawHtml) is not None:
-				result = rawHtml.string.extract()
+				# result = rawHtml.string.extract()
+				result = rawHtml.get_text()
+			else:
+				result = rawHtml
 		except Exception as e:
+			return self.errorResponse('02','ERR',e.message)
 			print "Exception occured "+e.message
 			print rawHtml
 
@@ -85,10 +98,14 @@ class RailParser(object):
 			trainName = self.findStringValuefromTable(trainDetailTable,'Train Name')
 			journeyStation = self.findStringValuefromTable(trainDetailTable,'Journey Station')
 			journeyDate = self.findStringValuefromTable(trainDetailTable,'Journey Date')
-			# print findStringValuefromTable(trainDetailTable,'Scheduled Arrival')
-			# print findStringValuefromTable(trainDetailTable,'Actual Arrival')
-			# print findStringValuefromTable(trainDetailTable,'Delay Arrival')
-			# print findStringValuefromTable(trainDetailTable,'Last Location')
+			scheduledArrival = self.findStringValuefromTable(trainDetailTable,'Scheduled Arrival')
+			scheduledDeparture = self.findStringValuefromTable(trainDetailTable,'Scheduled Departure')
+			actualArrival = self.findStringValuefromTable(trainDetailTable,'Actual Arrival')
+			actualDeparture = self.findStringValuefromTable(trainDetailTable,'Actual Departure')
+			expectedArrival = self.findStringValuefromTable(trainDetailTable,'Expected Arrival')
+			expectedDeparture = self.findStringValuefromTable(trainDetailTable,'Expected Departure')
+			delayInArrival = self.findStringValuefromTable(trainDetailTable,'Delay Arrival')
+			lastLocation = self.findStringValuefromTable(trainDetailTable,'Last Location')
 
 			# print trainDetailTable.prettify()
 			
@@ -97,6 +114,14 @@ class RailParser(object):
 					'trainName':trainName,
 					'journeyStation':journeyStation,
 					'journeyDate':journeyDate,
+					'scheduledArrival':scheduledArrival,
+					'scheduledDeparture':scheduledDeparture,
+					'actualArrival':actualArrival,
+					'actualDeparture':actualDeparture,
+					'expectedArrival':expectedArrival,
+					'expectedDeparture':expectedDeparture,
+					'delayInArrival':delayInArrival,
+					'lastLocation':lastLocation,
 					'time': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 				}
 
