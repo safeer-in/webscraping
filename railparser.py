@@ -7,6 +7,7 @@ import re
 from scrap import Scrap
 import json
 from database import MongoConnection
+import time, threading
 
 class RailParser(object):
 	"""docstring for RailParser"""
@@ -56,7 +57,7 @@ class RailParser(object):
 					print 'Error in creating dir'+ e.message
 			else:
 				pass
-
+			trainNo = data['trainNo']	
 			with open(directory+'/'+trainNo+'.json','w') as outfile:
 				json.dump(data,outfile)
 
@@ -143,20 +144,28 @@ class RailParser(object):
 
 if __name__ == '__main__':
 
-	today = datetime.date.today()
-	todayFormated = today.strftime('%d-%b-%Y');
-	dayofweek = today.strftime('%a')
+	def periodicDataCollection():
+		today = datetime.date.today()
+		todayFormated = today.strftime('%d-%b-%Y');
+		dayofweek = today.strftime('%a')
 
-	trainNoList = ['16630','16341','16303','56308','sasdf']
-	queryStation = 'QLN#false'
-	queryDate = todayFormated
-	queryDay = dayofweek
+		trainNoList = ['16630','16341','16303','56308','sasdf']
+		queryStation = 'QLN#false'
+		queryDate = todayFormated
+		queryDay = dayofweek
 
-	parser = RailParser()
-	for trainNo in trainNoList:
-		parser.scrapTrainData(trainNo,queryStation,queryDate,queryDay)
+		parser = RailParser()
+		for trainNo in trainNoList:
+			parser.scrapTrainData(trainNo,queryStation,queryDate,queryDay)
 
-	for doc in parser.getData():
-			print(doc)
+		for doc in parser.getData():
+				print(doc)
+
+	def repeat():
+	    print(time.ctime())
+	    periodicDataCollection()
+	    threading.Timer(10, repeat).start()
+
+repeat()
 
 
